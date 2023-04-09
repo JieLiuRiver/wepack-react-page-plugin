@@ -68,10 +68,6 @@ interface Options {
    */
   extendRoute?: (route: Route, parent: Route | undefined) => Route | void
   /**
-   * Custom generated routes
-   */
-  onRoutesGenerated?: (routes: Route[]) => Route[] | void | Promise<Route[] | void>
-  /**
    * Custom generated client code
    */
   onClientGenerated?: (clientCode: string) => string | void | Promise<string | void>
@@ -87,3 +83,14 @@ export interface ResolvedOptions extends Options {
 }
 
 export type UserOptions = Partial<Options>
+
+export interface ResolvedPage {
+  dir: string
+  route: string
+  extension: string
+  filepath: string
+  component: string
+  customBlock: Record<string, any> | null
+}
+
+export type ResolvedPages = Map<string, ResolvedPage>

@@ -1,5 +1,4 @@
 import { resolve, basename } from 'path'
-import Debug from 'debug'
 import { toArray, slash } from '@antfu/utils'
 import { ResolvedOptions, Route } from './types'
 import type { OutputBundle } from 'rollup'
@@ -13,7 +12,7 @@ export function extensionsToGlob(extensions: string[]) {
 }
 
 function isPagesDir(path: string, options: ResolvedOptions) {
-  for (const page of options.pagesDir) {
+  for (const page of (options?.pagesDir || [])) {
     const dirPath = slash(resolve(options.root, page.dir))
     if (path.startsWith(dirPath)) return true
   }
@@ -22,15 +21,6 @@ function isPagesDir(path: string, options: ResolvedOptions) {
 
 export function isTarget(path: string, options: ResolvedOptions) {
   return isPagesDir(path, options) && options.extensionsRE.test(path)
-}
-
-export const debug = {
-  hmr: Debug('vite-plugin-pages:hmr'),
-  parser: Debug('vite-plugin-pages:parser'),
-  gen: Debug('vite-plugin-pages:gen'),
-  options: Debug('vite-plugin-pages:options'),
-  cache: Debug('vite-plugin-pages:cache'),
-  pages: Debug('vite-plugin-pages:pages'),
 }
 
 const dynamicRouteRE = /^\[.+\]$/
@@ -56,7 +46,7 @@ export function resolveImportMode(
   if (typeof mode === 'function')
     return mode(filepath)
 
-  for (const pageDir of options.pagesDir) {
+  for (const pageDir of (options?.pagesDir || [])) {
     if (
       options.syncIndex
       && pageDir.baseRoute === ''

@@ -30,19 +30,20 @@
     "build-esm": "tsup src/index.ts --format esm --no-splitting --target node13.2",
     "prepublishOnly": "npm run build",
     "release": "bumpp --commit --tag --push",
-    "example:dev": "npm -C example/vue run dev",
-    "example:build": "npm -C example/vue run build",
-    "example:serve": "npm -C example/vue run serve",
+    "example:dev": "npm -C example run start",
+    "example:build": "npm -C example run build",
     "test": "jest --runInBand",
     "lint": "eslint --ext .js,.ts,.vue,.json .",
     "lint:fix": "eslint --fix --ext .js,.ts,.json ."
   },
   "dependencies": {
     "@antfu/utils": "^0.3.0",
+    "@types/webpack-sources": "^3.2.0",
     "debug": "^4.3.2",
     "deep-equal": "^2.0.5",
     "fast-glob": "^3.2.7",
     "json5": "^2.2.0",
+    "webpack-sources": "^3.2.3",
     "yaml": "^2.0.0-8"
   },
   "devDependencies": {

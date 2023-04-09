@@ -1,40 +1,31 @@
-// import * as path from 'path'
-// import * as glob from 'fast-glob'
-import { UserOptions } from './types'
+import { RawSource } from 'webpack-sources'
+import { ResolvedOptions, ResolvedPages, Route, UserOptions } from './types'
 import { resolveOptions } from './options'
+import { resolvePages } from './pages'
+import { generateClientCode, generateRoutes } from './generate'
+// import { generateRoutes } from './generate'
+// import { resolvePages } from './pages'
 
 export default class WebpackPagesPlugin {
-  options: UserOptions
+  private generatedRoutes: Route[] | null = null
+  userOptions: UserOptions | null = null
+  options: ResolvedOptions | null = null
+  pages: ResolvedPages | null = null
+
   constructor(options: UserOptions) {
-    this.options = options || {}
+    this.userOptions = options
   }
 
   apply(compiler: any) {
     compiler.hooks.compilation.tap('WebpackPagesPlugin', (compilation: any) => {
-      // 查找所有页面组件
-      const pages = resolveOptions(this.options)
-      // eslint-disable-next-line no-console
-      console.log('pages', pages, 'compilation', compilation)
+      this.options = resolveOptions(this.userOptions || {})
+      this.pages = resolvePages(this.options)
 
-      // // 生成路由配置数组
-      // const routes = generateRoutes(pages, this.options)
+      this.generatedRoutes = generateRoutes(this.pages, this.options)
 
-      // // 转换路由配置数组为 JavaScript 代码字符串
-      // const clientCode = generateClientCode(routes, this.options)
+      const clientCode = generateClientCode(this.generatedRoutes, this.options)
 
-      // // 将生成的代码添加到虚拟文件中
-      // compilation.assets['generated-routes.js'] = {
-      //   source: () => clientCode,
-      //   size: () => clientCode.length,
-      // }
+      compilation.assets['./static/js/generated-routes.js'] = new RawSource(clientCode)
     })
   }
 }
-
-// function generateRoutes(pages, options) {
-//   // 实现类似于 generateRoutes 的逻辑
-// }
-
-// function generateClientCode(routes, options) {
-//   // 实现类似于 generateClientCode 的逻辑
-// }
